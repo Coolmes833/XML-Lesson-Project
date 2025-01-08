@@ -8,7 +8,7 @@
     <script src="script.js" defer></script>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* ✅ Genel Stil Düzenlemeleri */
+        /*Genel Stil Düzenlemeleri*/
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -65,7 +65,7 @@
             background-color: #45a049;
         }
 
-        /* ✅ Tablo Stili */
+        /* Tablo Stili */
         table {
             width: 90%;
             margin: 20px auto;
@@ -105,7 +105,7 @@
             background: #d32f2f;
         }
 
-        /* ✅ Boş Liste Durumu */
+        /* Boş Liste Durumu */
         .no-appointments {
             text-align: center;
             padding: 20px;
@@ -118,10 +118,11 @@
 <body>
     <h2>📅 Customer Appointment System</h2>
 
-    <!-- ✅ Appointment Form -->
+    <!-- Appointment Form -->
     <div class="form-container">
         <form id="appointmentForm">
             <input type="password" id="tcID" placeholder="Enter TC ID" required>
+            <button type="button" id="toggleTcID">👁️</button>
             <input type="text" id="customerName" placeholder="Enter Name" required>
             <input type="text" id="customerSurname" placeholder="Enter Surname" required>
             <input type="number" id="birthYear" placeholder="Enter Birth Year" required>
@@ -131,7 +132,7 @@
         </form>
     </div>
 
-    <!-- ✅ Appointment List -->
+    <!-- Appointment List -->
     <h3>📝 Appointment List</h3>
     <table>
         <thead>
@@ -143,7 +144,7 @@
                 <th>Birth Year</th>
                 <th>Appointment Date</th>
                 <th>Appointment Time</th>
-                <th>Actions</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody id="appointmentTableBody">

@@ -2,23 +2,24 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from zeep import Client
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__, static_folder='static', static_url_path='/')
 
-# ✅ CORS Ayarı
+#CORS Ayarı
 CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "DELETE"], "allow_headers": ["Content-Type"]}})
 
-# ✅ MySQL Bağlantısı
+#MySQL Bağlantısı
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1632@127.0.0.1:3306/customer_db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-# ✅ Veritabanı Modeli
+#Veritabanı Modeli
 class Customer(db.Model):
     __tablename__ = 'customers'
     id = db.Column(db.Integer, primary_key=True)
-    tcID = db.Column(db.String(11), unique=True, nullable=False)
+    tcID = db.Column(db.String(256), unique=True, nullable=False)  # Hashlenmiş TC ID için daha uzun alan
     customerName = db.Column(db.String(100), nullable=False)
     customerSurname = db.Column(db.String(100), nullable=False)
     birthYear = db.Column(db.Integer, nullable=False)
@@ -28,7 +29,7 @@ class Customer(db.Model):
 with app.app_context():
     db.create_all()
 
-# ✅ TC Kimlik Doğrulama
+#TC Kimlik Doğrulama
 def verify_tc_id(tc_id, name, surname, birth_year):
     try:
         client = Client('https://tckimlik.nvi.gov.tr/Service/KPSPublic.asmx?WSDL')
@@ -43,7 +44,14 @@ def verify_tc_id(tc_id, name, surname, birth_year):
         print(f"SOAP Error: {e}")
         return False
 
-# ✅ Kullanıcı Kaydı
+# TC Kimlik Doğrulama ve Hashleme
+def hash_tc_id(tc_id):
+    return generate_password_hash(tc_id)
+
+def check_tc_id(tc_id, hashed_tc_id):
+    return check_password_hash(hashed_tc_id, tc_id)
+
+# Kullanıcı Kaydı Fonksiyonu
 @app.route('/register', methods=['POST'])
 def register_customer():
     data = request.json
@@ -54,35 +62,56 @@ def register_customer():
     appointment_date = data.get('appointmentDate')
     appointment_time = data.get('appointmentTime')
 
-    is_valid = verify_tc_id(tc_id, name, surname, birth_year)
-    if not is_valid:
-        return jsonify({"error": "Invalid TC ID or Details"}), 400
+    if not tc_id or not name or not surname or not birth_year:
+        return jsonify({"error": "All fields are required"}), 400
 
-    new_customer = Customer(tcID=tc_id, customerName=name, customerSurname=surname, birthYear=birth_year, appointmentDate=appointment_date, appointmentTime=appointment_time)
-    db.session.add(new_customer)
-    db.session.commit()
+    try:
+        # TC Kimlik doğrulama
+        is_valid = verify_tc_id(tc_id, name, surname, birth_year)
+        if not is_valid:
+            return jsonify({"error": "Invalid TC ID or Details"}), 400
 
-    return jsonify({"message": "Customer registered successfully!"}), 201
-# ✅ Randevuları Listele
+# Veriyi veritabanına ekle ve hashle
+        hashed_tc_id = generate_password_hash(tc_id)
+        new_customer = Customer(
+            customerName=name,
+            customerSurname=surname,
+            birthYear=birth_year,
+            appointmentDate=appointment_date,
+            appointmentTime=appointment_time,
+            tcID=hashed_tc_id  # tcID burada kontrol edilmeli
+        )
+        db.session.add(new_customer)
+        db.session.commit()
+
+        return jsonify({"message": "Customer registered successfully!"}), 201
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Failed to register customer"}), 500
+
+
+# Randevuları Listele
 @app.route('/appointments', methods=['GET'])
 def get_appointments():
     try:
-        appointments = Customer.query.all()  # Düzgün model adı kullanıldı
+        appointments = Customer.query.all()
         appointments_list = [{
             "id": appointment.id,
-            "tcID": appointment.tcID if hasattr(appointment, 'tcID') else 'N/A',
             "customerName": appointment.customerName,
             "customerSurname": appointment.customerSurname,
             "birthYear": appointment.birthYear,
             "appointmentDate": appointment.appointmentDate.isoformat() if appointment.appointmentDate else None,
-            "appointmentTime": appointment.appointmentTime.isoformat() if appointment.appointmentTime else None
+            "appointmentTime": appointment.appointmentTime.isoformat() if appointment.appointmentTime else None,
+            "tcID": "*****"  # TC ID gizlenmiş olarak gösterilir
         } for appointment in appointments]
         return jsonify(appointments_list), 200
     except Exception as e:
         print(f"Error fetching appointments: {e}")
         return jsonify({"error": "Failed to fetch appointments"}), 500
 
-# ✅ Randevu Silme Endpoint'i
+
+# Randevu Silme Endpoint'i
 @app.route('/delete_appointment/<int:appointment_id>', methods=['DELETE'])
 def delete_appointment(appointment_id):
     try:
@@ -97,7 +126,7 @@ def delete_appointment(appointment_id):
         print(f"Error deleting appointment: {e}")
         return jsonify({"error": "Failed to delete appointment"}), 500
 
-# ✅ Ana Sayfa
+# Ana Sayfa
 @app.route('/')
 def serve_frontend():
     return send_from_directory(app.static_folder, 'index.html')

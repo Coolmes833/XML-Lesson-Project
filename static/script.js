@@ -1,4 +1,22 @@
-// ✅ DOM Elementlerini Doğru Seçelim
+//  TC ID Göster/Gizle Butonu
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleTcID = document.getElementById('toggleTcID');
+    const tcIDInput = document.getElementById('tcID');
+
+    if (toggleTcID && tcIDInput) {
+        toggleTcID.addEventListener('click', () => {
+            if (tcIDInput.type === 'password') {
+                tcIDInput.type = 'text';
+                toggleTcID.textContent = '🔒'; // Şifreyi gizle simgesi
+            } else {
+                tcIDInput.type = 'password';
+                toggleTcID.textContent = '👁️'; // Şifreyi göster simgesi
+            }
+        });
+    }
+});
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const appointmentForm = document.getElementById('appointmentForm');
 
@@ -12,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchAppointments();
 });
 
-// ✅ Kullanıcı Kayıt ve Randevu Ekleme Fonksiyonu
+// Kullanıcı Kayıt ve Randevu Ekleme Fonksiyonu
 async function registerCustomer(event) {
     event.preventDefault();
 
@@ -45,20 +63,20 @@ async function registerCustomer(event) {
         });
 
         const result = await response.json();
-        if (!response.ok) {
-            throw new Error(result.error || 'Failed to register customer');
+        if (response.ok) {
+            alert('Customer registered successfully!');
+            fetchAppointments(); // Listeyi güncelle
+            document.getElementById('appointmentForm').reset();
+        } else {
+            alert(`Error: ${result.error}`);
+            console.error('Backend Error:', result.error);
         }
-
-        alert('Customer registered successfully!');
-        fetchAppointments(); // Listeyi güncelle
-        document.getElementById('appointmentForm').reset();
     } catch (error) {
         console.error('Error registering customer:', error);
-        alert(`Error: ${error.message}`);
     }
 }
 
-// ✅ Randevuları Getir ve Görüntüle
+// Randevuları Getir ve Görüntüle
 async function fetchAppointments() {
     try {
         const response = await fetch('http://localhost:8000/appointments');
@@ -70,16 +88,11 @@ async function fetchAppointments() {
         const tableBody = document.getElementById('appointmentTableBody');
         tableBody.innerHTML = ''; // Mevcut tabloyu temizle
 
-        if (appointments.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="8">No appointments available.</td></tr>';
-            return;
-        }
-
         appointments.forEach(appointment => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${appointment.id}</td>
-                <td>${appointment.tcID || 'N/A'}</td>
+                <td>******</td> <!-- TC ID asla gösterilmez -->
                 <td>${appointment.customerName}</td>
                 <td>${appointment.customerSurname}</td>
                 <td>${appointment.birthYear}</td>
@@ -93,11 +106,10 @@ async function fetchAppointments() {
         });
     } catch (error) {
         console.error('Error fetching appointments:', error);
-        alert(`Error: ${error.message}`);
     }
 }
 
-// ✅ Randevu Silme Fonksiyonu
+//Randevu Silme Fonksiyonu
 async function deleteAppointment(appointmentId) {
     try {
         const response = await fetch(`http://localhost:8000/delete_appointment/${appointmentId}`, {
@@ -115,4 +127,6 @@ async function deleteAppointment(appointmentId) {
         console.error('Error deleting appointment:', error);
         alert(`Error: ${error.message}`);
     }
+
+
 }
