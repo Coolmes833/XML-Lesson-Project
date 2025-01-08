@@ -1,0 +1,117 @@
+/* Genel Stil Ayarları */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    color: #333;
+}
+
+/* Başlık Stili */
+h2 {
+    text-align: center;
+    margin: 20px 0;
+    color: #fff;
+    font-size: 2em;
+}
+
+/* Form Bölgesi */
+form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+form input,
+form select {
+    width: calc(33% - 10px);
+    padding: 10px;
+    margin: 10px 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+form input:focus {
+    outline: none;
+    border-color: #4facfe;
+    box-shadow: 0 0 5px rgba(79, 172, 254, 0.5);
+}
+
+/* Butonlar */
+button {
+    background: #4caf50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #388e3c;
+}
+
+/* Tablo Tasarımı */
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #4facfe;
+    color: #fff;
+    font-size: 1.1em;
+}
+
+tr:nth-child(even) {
+    background: #f2f2f2;
+}
+
+tr:hover {
+    background: #e0f7fa;
+}
+
+/* Randevu Sil Butonu */
+button.delete {
+    background: #f44336;
+}
+
+button.delete:hover {
+    background: #d32f2f;
+}
+
+/* Mobil Uyum */
+@media (max-width: 768px) {
+
+    form input,
+    form select {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    table {
+        font-size: 0.9em;
+    }
+}

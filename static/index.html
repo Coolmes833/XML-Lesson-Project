@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Management</title>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ✅ Genel Stil Düzenlemeleri */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #4facfe, #00f2fe);
+            color: #333;
+        }
+
+        h2,
+        h3 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* ✅ Form Stili */
+        .form-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+        }
+
+        form input,
+        form button {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        form input {
+            flex: 1 1 200px;
+        }
+
+        form button {
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+        /* ✅ Tablo Stili */
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table th,
+        table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #4facfe;
+            color: white;
+        }
+
+        table td {
+            background-color: #f9f9f9;
+        }
+
+        .delete-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
+
+        /* ✅ Boş Liste Durumu */
+        .no-appointments {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>📅 Customer Appointment System</h2>
+
+    <!-- ✅ Appointment Form -->
+    <div class="form-container">
+        <form id="appointmentForm">
+            <input type="password" id="tcID" placeholder="Enter TC ID" required>
+            <input type="text" id="customerName" placeholder="Enter Name" required>
+            <input type="text" id="customerSurname" placeholder="Enter Surname" required>
+            <input type="number" id="birthYear" placeholder="Enter Birth Year" required>
+            <input type="date" id="appointmentDate" required>
+            <input type="time" id="appointmentTime" required>
+            <button type="submit">Create Appointment</button>
+        </form>
+    </div>
+
+    <!-- ✅ Appointment List -->
+    <h3>📝 Appointment List</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>TC ID</th>
+                <th>Customer Name</th>
+                <th>Customer Surname</th>
+                <th>Birth Year</th>
+                <th>Appointment Date</th>
+                <th>Appointment Time</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="appointmentTableBody">
+            <!-- Appointment list will be populated here -->
+        </tbody>
+    </table>
+    <p id="noAppointmentsMessage" class="no-appointments" style="display:none;">No appointments available.</p>
+</body>
+
+</html>
